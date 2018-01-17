@@ -1,0 +1,48 @@
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
+
+<Files xmlrpc.php>
+order allow,deny
+deny from all
+</Files>
+<Files wp-config.php>
+order allow,deny
+deny from all
+</Files>
+
+# BEGIN Hide console URL
+<IfModule mod_rewrite.c>
+RewriteEngine On
+ 
+RewriteRule ^custom_admin_url/?$ /wp-login.php?your_secret_key [R,L]
+ 
+RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in_.*$
+RewriteRule ^custom_admin_url/?$ /wp-login.php?your_secret_key&redirect_to=/wp-admin/ [R,L]
+ 
+RewriteRule ^custom_admin_url/?$ /wp-admin/?your_secret_key [R,L]
+ 
+RewriteCond %{SCRIPT_FILENAME} !^(.*)admin-ajax\.php
+RewriteCond %{HTTP_REFERER} !^(.*)summary/wp-admin
+RewriteCond %{HTTP_REFERER} !^(.*)summary/wp-login\.php
+RewriteCond %{HTTP_REFERER} !^(.*)summary/custom_admin_url
+RewriteCond %{QUERY_STRING} !^your_secret_key
+RewriteCond %{QUERY_STRING} !^action=logout
+RewriteCond %{QUERY_STRING} !^action=rp
+RewriteCond %{QUERY_STRING} !^action=postpass
+RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in_.*$
+RewriteRule ^.*wp-admin/?|^.*wp-login\.php /not_found [R,L]
+ 
+RewriteCond %{QUERY_STRING} ^loggedout=true
+RewriteRule ^.*$ /wp-login.php?your_secret_key [R,L]
+</IfModule>
+# END Hide console URL
